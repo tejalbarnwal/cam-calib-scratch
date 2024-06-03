@@ -1,5 +1,6 @@
 #include "../include/calibration.h"
 #include "../include/homography.h"
+#include "../include/instrinsics.h"
 
 #include <opencv2/calib3d/calib3d.hpp>
 #include <vector>
@@ -59,8 +60,8 @@ namespace calibration
                 std::cerr << "could not read image: " << img_files[i] << "\n";
                 continue;
             }
-            cv::imshow("Image", img);
-            int k = cv::waitKey(500);
+            // cv::imshow("Image", img);
+            // int k = cv::waitKey(500);
 
             bool corners_found = cv::findChessboardCorners(img, chessBoardSize, corners);
 
@@ -71,8 +72,8 @@ namespace calibration
                 std::cout << "Number of corners: " << corners.size() << "\n";
                 cv::cornerSubPix(img, corners, cv::Size(11, 11), cv::Size(-1, -1), cv::TermCriteria(cv::TermCriteria::EPS | cv::TermCriteria::MAX_ITER, 30, 0.1));
                 cv::drawChessboardCorners(img, chessBoardSize, corners, corners_found);
-                cv::imshow("Image", img);
-                int k = cv::waitKey(500);
+                // cv::imshow("Image", img);
+                // int k = cv::waitKey(500);
                 // cv::destroyAllWindows();
 
                 img_points.push_back(corners);
@@ -141,6 +142,7 @@ namespace calibration
         std::cout << "\n-- Begin process of calibration --\n";
         int n = 11;
         homography::get_homography_matrix(X, x, n, H_n);
+        intrinsics::get_camera_intrinsics(H_n);
     }
 
 }

@@ -35,5 +35,5 @@ include_directories(
 # add_executable(matrices4AddCuda src/matrices4AddCUDA.cu)
 # target_link_libraries(matrices4AddCuda Eigen3::Eigen)
 
-add_executable(main src/main.cpp src/calibration.cpp src/homography.cpp)
+add_executable(main src/main.cpp src/calibration.cpp src/homography.cpp src/intrinsics.cpp)
 target_link_libraries(main ${EIGEN_LIBRARIES} ${OpenCV_LIBRARIES} )

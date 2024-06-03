@@ -30,6 +30,10 @@ int main(int argc, char const *argv[])
 
     // make variables for homography matrix, intrinsic matrix, extrinsic matrix, lens distortion
     Eigen::MatrixXd Hn_matrix;
+    Eigen::Matrix3d K;
+    Eigen::Matrix3d R;
+    Eigen::Vector3d t;
+    Eigen::Vector4d d;
     calibration::calibrate(&X_matrix, &x_matrix, &Hn_matrix);
 
     return 0;

@@ -13,7 +13,7 @@ namespace homography
 
     void estimate_frame_homography(Eigen::MatrixXd *X, 
                                 Eigen::MatrixXd *x,
-                                int num_imgs);
+                                Eigen::VectorXd *H);
 }
 
 #endif
