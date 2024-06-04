@@ -5,10 +5,10 @@
 
 namespace intrinsics
 {
-    double getH(int p, int q, Eigen::Matrix3d *Hi)
-    {
-        return (*Hi)(3*p+q);
-    }
+    // double getH(int p, int q, Eigen::Matrix3d *Hi)
+    // {
+    //     return (*Hi)(3*p+q);
+    // }
 
 
     void make_Vpq(int p, int q, Eigen::Matrix3d &H, Eigen::VectorXd &Vi)
@@ -21,7 +21,7 @@ namespace intrinsics
                 H(2, p) * H(2, q) ;
     }
     
-    void get_camera_intrinsics(std::vector<Eigen::Matrix3d> &Hn)
+    Eigen::Matrix3d get_camera_intrinsics(std::vector<Eigen::Matrix3d> &Hn)
     {
         int num_imgs = Hn.size();
         std::cout << "\nnum_imgs: " << num_imgs << "\n";
@@ -95,7 +95,7 @@ namespace intrinsics
 
         std::cout << "K: " << K << "\n";
 
-
+        return K;
         
     }
 

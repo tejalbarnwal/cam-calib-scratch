@@ -5,6 +5,7 @@
 #include <eigen3/Eigen/Dense>
 
 #include "../include/calibration.h"
+#include <vector>
 
 
 int main(int argc, char const *argv[])
@@ -33,12 +34,12 @@ int main(int argc, char const *argv[])
 
     // make variables for homography matrix, intrinsic matrix, extrinsic matrix, lens distortion
     // Eigen::MatrixXd Hn_matrix;
-    std::vector<Eigen::Matrix3d> Hn_matrix;
+    std::vector<Eigen::Matrix3d> Hn;
     Eigen::Matrix3d K;
-    Eigen::Matrix3d R;
-    Eigen::Vector3d t;
+    std::vector<Eigen::Matrix3d> R;
+    std::vector<Eigen::Vector3d> t;
     Eigen::Vector4d d;
-    calibration::calibrate(object_points, img_points, Hn_matrix);
+    calibration::calibrate(object_points, img_points, Hn, K, R, t, d);
 
     return 0;
 

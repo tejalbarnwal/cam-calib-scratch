@@ -27,7 +27,11 @@ namespace calibration
     // might pass eigen paramters
     void calibrate(std::vector<std::vector<cv::Point2f>> &object_points, 
                     std::vector<std::vector<cv::Point2f>> &img_points, 
-                    std::vector<Eigen::Matrix3d> &Hn_matrix);
+                    std::vector<Eigen::Matrix3d> &Hn_matrix,
+                    Eigen::Matrix3d &K,
+                    std::vector<Eigen::Matrix3d> &Rn,
+                    std::vector<Eigen::Vector3d> &tn,
+                    Eigen::Vector4d &d);
 }
 
 

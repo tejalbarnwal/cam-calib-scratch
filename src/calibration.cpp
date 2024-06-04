@@ -1,6 +1,7 @@
 #include "../include/calibration.h"
 #include "../include/homography.h"
 #include "../include/instrinsics.h"
+#include "../include/extrinsics.h"
 
 #include <opencv2/calib3d/calib3d.hpp>
 #include <vector>
@@ -130,12 +131,18 @@ namespace calibration
     }
 
     void calibrate(std::vector<std::vector<cv::Point2f>> &object_points,
-                std::vector<std::vector<cv::Point2f>> &img_points, std::vector<Eigen::Matrix3d> &Hn)
+                std::vector<std::vector<cv::Point2f>> &img_points, 
+                std::vector<Eigen::Matrix3d> &Hn,
+                Eigen::Matrix3d &K,
+                std::vector<Eigen::Matrix3d> &Rn,
+                std::vector<Eigen::Vector3d> &tn,
+                Eigen::Vector4d &d)
     {
         std::cout << "\n-- Begin process of calibration --\n";
         int n = 11;
         homography::get_homography_matrix(object_points, img_points, Hn);
-        intrinsics::get_camera_intrinsics(Hn);
+        K = intrinsics::get_camera_intrinsics(Hn);
+        extrinsics::get_camera_extrinsics(Hn, K, Rn, tn);
     }
 
 }
