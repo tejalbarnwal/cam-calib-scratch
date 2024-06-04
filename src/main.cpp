@@ -22,19 +22,23 @@ int main(int argc, char const *argv[])
     Eigen::MatrixXd X_matrix;
     Eigen::MatrixXd x_matrix;
 
+    std::vector<std::vector<cv::Point2f>> img_points;
+    std::vector<std::vector<cv::Point2f>> object_points;
+
     calibration::findChessBoardCorner(abs_path_img_folder,
                                     pattern_size,
                                     square_size,
                                     show_corners_on_img,
-                                    &X_matrix, &x_matrix);
+                                    object_points, img_points);
 
     // make variables for homography matrix, intrinsic matrix, extrinsic matrix, lens distortion
-    Eigen::MatrixXd Hn_matrix;
+    // Eigen::MatrixXd Hn_matrix;
+    std::vector<Eigen::Matrix3d> Hn_matrix;
     Eigen::Matrix3d K;
     Eigen::Matrix3d R;
     Eigen::Vector3d t;
     Eigen::Vector4d d;
-    calibration::calibrate(&X_matrix, &x_matrix, &Hn_matrix);
+    calibration::calibrate(object_points, img_points, Hn_matrix);
 
     return 0;
 

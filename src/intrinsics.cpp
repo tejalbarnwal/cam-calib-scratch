@@ -5,46 +5,40 @@
 
 namespace intrinsics
 {
-    double getH(int p, int q, Eigen::VectorXd *Hi)
+    double getH(int p, int q, Eigen::Matrix3d *Hi)
     {
         return (*Hi)(3*p+q);
     }
 
 
-    void make_Vpq(int p, int q, Eigen::VectorXd *Hi, Eigen::VectorXd *Vi)
+    void make_Vpq(int p, int q, Eigen::Matrix3d &H, Eigen::VectorXd &Vi)
     {
-        (*Vi) << getH(0, p, Hi) * getH(0, q, Hi), 
-                    getH(0, p, Hi) * getH(1, q, Hi) + getH(1, p, Hi) * getH(0, q, Hi), 
-                    getH(1, p, Hi) * getH(1, q, Hi),
-                    getH(2, p, Hi) * getH(0, q, Hi) + getH(0, p, Hi) * getH(2, q, Hi),
-                    getH(2, p, Hi) * getH(1, q, Hi) + getH(1, p, Hi) * getH(2, q, Hi),
-                    getH(2, p, Hi) * getH(2, q, Hi) ;
+        Vi << H(0, p) * H(0, q),
+                H(0, p) * H(1, q) + H(1, p) * H(0, q),
+                H(1, p) * H(1, q),
+                H(2, p) * H(0, q) + H(0, p) * H(2, q),
+                H(2, p) * H(1, q) + H(1, p) * H(2, q),
+                H(2, p) * H(2, q) ;
     }
     
-    void get_camera_intrinsics(Eigen::MatrixXd *Hn)
+    void get_camera_intrinsics(std::vector<Eigen::Matrix3d> &Hn)
     {
-        int num_imgs = Hn->rows();
+        int num_imgs = Hn.size();
         std::cout << "\nnum_imgs: " << num_imgs << "\n";
-        // ensure we have enough point to solve this system
-        Eigen::MatrixXd Vn;
+        // ensure we have enough points to solve this system
+        Eigen::MatrixXd Vn(2 * num_imgs, 6);
 
-        if (Vn.size() == 0)
-        {
-            Vn.resize(2 * num_imgs, 6);
-        }
         for(int i=0; i<num_imgs; i++)
         {
-            std::cout << "i: " << i << "\n";
-
-            Eigen::VectorXd H_i = Hn->row(i);
-            Eigen::VectorXd V_i = Vn.row(2*i);
-            make_Vpq(0, 1, &H_i, &V_i);
-            Vn.row(2*i) = V_i;
+            Eigen::Matrix3d H_i = Hn[i];
+            Eigen::VectorXd V0(6);
+            make_Vpq(0, 1, H_i, V0);
+            Vn.row(2*i) = V0;
 
             Eigen::VectorXd V1(6);
             Eigen::VectorXd V2(6);
-            make_Vpq(0, 0, &H_i, &V1);
-            make_Vpq(1, 1, &H_i, &V2);
+            make_Vpq(0, 0, H_i, V1);
+            make_Vpq(1, 1, H_i, V2);
             Vn.row(2*i+1) = V1 - V2;
         }
         Eigen::VectorXd b;
@@ -72,25 +66,36 @@ namespace intrinsics
         B(0, 1) = b(1);
         B(1, 0) = b(1);
         B(0, 2) = b(3);
+        B(2, 0) = b(3);
         B(1, 1) = b(2);
-        B(2, 0) = b(2);
         B(1, 2) = b(4);
         B(2, 1) = b(4);
         B(2, 2) = b(5);
 
-        Eigen::Matrix3d K;
+        std::cout << "B: " << B << std::endl;
+
+        Eigen::Matrix3d K_inv_T;
 
         Eigen::LLT<Eigen::Matrix3d> choleskyDecomposeofB(B);
         if (choleskyDecomposeofB.info() == Eigen::Success)
         {
-            K = choleskyDecomposeofB.matrixL();
+            K_inv_T = choleskyDecomposeofB.matrixL();
         }
         else
         {
+            // make it better
             std::cout << "\n-- doing cholesky decomposition for -B\n";
-            // Eigen::LLT<Eigen::Matrix3d> choleskyDecomposeofB(-1*B);
-            // K = choleskyDecomposeofB.matrixL();
+            Eigen::LLT<Eigen::Matrix3d> choleskyDecomposeofB(-1*B);
+            K_inv_T = choleskyDecomposeofB.matrixL();
         }
+
+        std::cout << "K_inv_T: " << K_inv_T << "\n";
+
+        Eigen::Matrix3d K = K_inv_T(2, 2) * (K_inv_T.inverse()).transpose();
+
+        std::cout << "K: " << K << "\n";
+
+
         
     }
 

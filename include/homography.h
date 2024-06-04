@@ -3,17 +3,17 @@
 
 #include <iostream>
 #include <eigen3/Eigen/Dense>
+#include <vector>
+#include <opencv2/core/types_c.h>
 
 namespace homography
 {
-    void get_homography_matrix(Eigen::MatrixXd *X, 
-                                Eigen::MatrixXd *x, 
-                                int num_imgs, 
-                                Eigen::MatrixXd *Hn);
+    void get_homography_matrix(std::vector<std::vector<cv::Point2f>> &object_points,
+                                std::vector<std::vector<cv::Point2f>> &img_points, 
+                                std::vector<Eigen::Matrix3d> &Hn);
 
-    void estimate_frame_homography(Eigen::MatrixXd *X, 
-                                Eigen::MatrixXd *x,
-                                Eigen::VectorXd *H);
+    Eigen::Matrix3d estimate_frame_homography(std::vector<cv::Point2f> &object_points,
+                                std::vector<cv::Point2f> &img_points);
 }
 
 #endif

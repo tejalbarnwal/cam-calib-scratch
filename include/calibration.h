@@ -21,10 +21,13 @@ namespace calibration
                                 std::pair<int, int> pattern_size,
                                 double square_size,
                                 bool show_corners_on_img,
-                                Eigen::MatrixXd *X, Eigen::MatrixXd *x);
+                                std::vector<std::vector<cv::Point2f>> &object_points,
+                                std::vector<std::vector<cv::Point2f>> &img_points);
 
     // might pass eigen paramters
-    void calibrate(Eigen::MatrixXd *X, Eigen::MatrixXd *x, Eigen::MatrixXd *H_n);
+    void calibrate(std::vector<std::vector<cv::Point2f>> &object_points, 
+                    std::vector<std::vector<cv::Point2f>> &img_points, 
+                    std::vector<Eigen::Matrix3d> &Hn_matrix);
 }
 
 
