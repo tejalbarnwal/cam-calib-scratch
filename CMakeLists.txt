@@ -37,30 +37,15 @@ include_directories(
     ${EIGEN_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
 )
-# foreach(dep math;gui;maps)
-#     include_directories(mrpt::${dep})
-# endforeach()
 
-# add_executable(vectorAddCpp src/vectorAdd.cpp)
 
-# add_executable(vectorAddCuda src/vectorAddCUDA.cu)
-
-# add_executable(matricesAddCuda src/matricesAddCUDA.cu)
-# target_link_libraries(matricesAddCuda Eigen3::Eigen)
-
-# add_executable(matrices4AddCuda src/matrices4AddCUDA.cu)
-# target_link_libraries(matrices4AddCuda Eigen3::Eigen)
-
-add_executable(main src/main.cpp src/calibration.cpp src/homography.cpp src/intrinsics.cpp src/extrinsics.cpp)
-target_link_libraries(main ${EIGEN_LIBRARIES} ${OpenCV_LIBRARIES} )
-
-add_executable(calib_main src/calibration_main.cpp src/calib/compute_init_param.cpp src/calib/refine.cpp)
+add_executable(calib_main src/calibration_main.cpp src/calib/compute_init_param.cpp )
 target_link_libraries(calib_main ${EIGEN_LIBRARIES} ${OpenCV_LIBRARIES} )
 
-add_executable(eg_mrpt_opt src/eg_mrpt_opt.cpp)
+add_executable(eg_mrpt_opt src/reference_opt_egs/eg_mrpt_opt.cpp)
 foreach(dep math;random;gui;maps)
 	target_link_libraries(eg_mrpt_opt mrpt::${dep})
 endforeach()
 
-add_executable(eigen_lm2 src/eigen_lm2.cpp)
+add_executable(eigen_lm2 src/reference_opt_egs/eigen_lm2.cpp)
 target_link_libraries(eigen_lm2 ${EIGEN_LIBRARIES})

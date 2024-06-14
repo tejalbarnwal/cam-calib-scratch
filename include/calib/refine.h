@@ -76,17 +76,13 @@ namespace refine
             K << alpha, gamma,  uc, 
                     0.0,    beta,   vc, 
                     0.0,    0.0,    1.0;
-            // std::cout << "K done\n";
 
             Eigen::Vector2d D;
             D(0) = k0;
             D(1) = k1;
-            // std::cout << "D done\n";
 
             int num_imgs = (P.size() - 7) / 6;
-            // std::cout << "num img: " << num_imgs << "\n";
             int num_points_each_img = object_points[0].size();
-            // std::cout << "num_points_each_img: " << num_points_each_img << "\n";
             int l = 0;
             for(int i=0; i< num_imgs; i++)
             {

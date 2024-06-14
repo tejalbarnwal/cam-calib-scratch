@@ -24,21 +24,21 @@ computeInitialParams::get_normalization_matrix(const std::vector<cv::Point2f> &v
     }
 
     double mean_x = vec_x.mean();
-    std::cout << "mean_x: " << mean_x << "\n";
+    // std::cout << "mean_x: " << mean_x << "\n";
     double mean_y = vec_y.mean();
-    std::cout << "mean_y: " << mean_y << "\n";
+    // std::cout << "mean_y: " << mean_y << "\n";
 
     double var_x = (vec_x.array() - mean_x).square().mean();
-    std::cout << "var_x: " << var_x << "\n";
+    // std::cout << "var_x: " << var_x << "\n";
 
     double var_y = (vec_y.array() - mean_y).square().mean();
-    std::cout << "var_y: " << var_y << "\n";
+    // std::cout << "var_y: " << var_y << "\n";
 
     double sd_x = std::sqrt(2.0 / var_x);
-    std::cout << "s_x: " << sd_x << "\n";
+    // std::cout << "s_x: " << sd_x << "\n";
 
     double sd_y = std::sqrt(2.0 / var_y);
-    std::cout << "s_y: " << sd_y << "\n";
+    // std::cout << "s_y: " << sd_y << "\n";
 
     Eigen::Matrix3d norm;
 
@@ -53,7 +53,7 @@ std::pair<bool, Eigen::Matrix3d>
 computeInitialParams::estimate_frame_homography(const std::vector<cv::Point2f> &object_point,
                                                 const std::vector<cv::Point2f> &img_point)
 {
-    std::cout << "calculate homography matrix for each img\n";
+    // std::cout << "calculate homography matrix for each img\n";
 
     if (object_point.size() != img_point.size())
     {
@@ -65,9 +65,9 @@ computeInitialParams::estimate_frame_homography(const std::vector<cv::Point2f> &
         int num_corners = object_point.size() ;
 
         Eigen::Matrix3d object_norm = get_normalization_matrix(object_point);
-        std::cout << "object norm: " << object_norm << "\n";
+        // std::cout << "object norm: " << object_norm << "\n";
         Eigen::Matrix3d img_norm = get_normalization_matrix(img_point);
-        std::cout << "img norm: " << img_norm << "\n";
+        // std::cout << "img norm: " << img_norm << "\n";
 
         // Eigen::MatrixXd *M = new Eigen::MatrixXf(Eigen::MatrixXf::Zero(2*num_corners, 9));
         Eigen::MatrixXd M = Eigen::MatrixXd::Zero(2*num_corners, 9);
@@ -75,13 +75,13 @@ computeInitialParams::estimate_frame_homography(const std::vector<cv::Point2f> &
         {
             int k = 2*i;
             double X0 = ((object_point)[i]).x;
-            std::cout << "X0:" << X0 << "\n";
+            // std::cout << "X0:" << X0 << "\n";
             double Y0 = ((object_point)[i]).y;
-            std::cout << "Y0:" << Y0 << "\n";
+            // std::cout << "Y0:" << Y0 << "\n";
             double x0 = ((img_point)[i]).x;
-            std::cout << "x0:" << x0 << "\n";
+            // std::cout << "x0:" << x0 << "\n";
             double y0 = ((img_point)[i]).y;
-            std::cout << "y0:" << y0 << "\n";
+            // std::cout << "y0:" << y0 << "\n";
 
             Eigen::Vector3d X{((object_point)[i]).x, ((object_point)[i]).y, 1.0};
             Eigen::Vector3d x{((img_point)[i]).x, ((img_point)[i]).y, 1.0};
@@ -91,8 +91,8 @@ computeInitialParams::estimate_frame_homography(const std::vector<cv::Point2f> &
             Eigen::Vector2d norm_X_2d{norm_X(0)/norm_X(2), norm_X(1)/norm_X(2)};
             Eigen::Vector2d norm_x_2d{norm_x(0)/norm_x(2), norm_x(1)/norm_x(2)};
 
-            std::cout << "norm_X_2d: " << norm_X_2d << "\n";
-            std::cout << "norm_x_2d: " << norm_x_2d << "\n";
+            // std::cout << "norm_X_2d: " << norm_X_2d << "\n";
+            // std::cout << "norm_x_2d: " << norm_x_2d << "\n";
 
             // M.row(k) << -X0, -Y0, -1, 0.0, 0.0, 0.0, x0*X0, x0* X0, x0;
             // M.row(k+1) << 0.0, 0.0, 0.0, -X0, -Y0, -1, y0*X0, y0*Y0, y0;
@@ -113,22 +113,22 @@ computeInitialParams::estimate_frame_homography(const std::vector<cv::Point2f> &
         // std::cout << "Original matrix M:\n" << M << std::endl << std::endl;
         // std::cout << "Singular values:\n" << singularValues << std::endl << std::endl;
         // std::cout << "Right singular vectors (V):\n" << V << std::endl << std::endl;
-        std::cout << "Vector with least singular value:\n" << leastSingularVector << std::endl;
+        // std::cout << "Vector with least singular value:\n" << leastSingularVector << std::endl;
 
-        std::cout << "\n\n\n--------";
+        // std::cout << "\n\n\n--------";
         // (*H) = leastSingularVector;
         // std::cout << "Vector with least singular value:\n" << (*H) << std::endl;
 
         Eigen::Matrix3d sv_mat = (Eigen::Map<Eigen::Matrix3d>(leastSingularVector.data())).transpose();
-        std::cout << "sv_mat: " << sv_mat << "\n";
+        // std::cout << "sv_mat: " << sv_mat << "\n";
 
-        std::cout << "Q-1: " << img_norm.inverse() << "\n";
+        // std::cout << "Q-1: " << img_norm.inverse() << "\n";
 
-        std::cout << "Q-1 * nH: " << ((img_norm.inverse()) * sv_mat) << "\n";
+        // std::cout << "Q-1 * nH: " << ((img_norm.inverse()) * sv_mat) << "\n";
 
         Eigen::Matrix3d H_mat = ((img_norm.inverse()) * sv_mat) * object_norm;
 
-        std::cout << "h_mat: " << H_mat << "\n";
+        // std::cout << "h_mat: " << H_mat << "\n";
 
         // (*H) = Eigen::Map<Eigen::VectorXd>((H_mat.transpose()).data(), H_mat.size());
 
@@ -140,7 +140,7 @@ computeInitialParams::estimate_frame_homography(const std::vector<cv::Point2f> &
 
 bool computeInitialParams::compute_homography()
 {
-    std::cout << "calculate homography matrix\n";
+    std::cout << "calculate homography matrix for each of the imgs\n";
     // for each img homography matrix would contain 9 params
     // therefore, size of homography matrix can be: no of img * 9
     int num_imgs = object_points.size();
@@ -187,8 +187,9 @@ computeInitialParams::make_Vpq(int p, int q, const Eigen::Matrix3d &H, Eigen::Ve
 
 bool computeInitialParams::compute_intrinsics()
 {
+    std::cout << "calculating initial intrinsic matrix\n";
     int num_imgs = Hn.size();
-    std::cout << "\nnum_imgs: " << num_imgs << "\n";
+    // std::cout << "\nnum_imgs: " << num_imgs << "\n";
     // ensure we have enough points to solve this system
     Eigen::MatrixXd Vn(2 * num_imgs, 6);
 
@@ -221,9 +222,9 @@ bool computeInitialParams::compute_intrinsics()
     // std::cout << "Right singular vectors (V):\n" << V << std::endl << std::endl;
     // std::cout << "Vector with least singular value:\n" << leastSingularVector << std::endl;
 
-    std::cout << "\n\n\n--------";
+    // std::cout << "\n\n\n--------";
     b = leastSingularVector;
-    std::cout << "Vector with least singular value:\n" << b << std::endl;
+    // std::cout << "Vector with least singular value:\n" << b << std::endl;
 
     Eigen::Matrix3d B;
     B(0, 0) = b(0);
@@ -236,7 +237,7 @@ bool computeInitialParams::compute_intrinsics()
     B(2, 1) = b(4);
     B(2, 2) = b(5);
 
-    std::cout << "B: " << B << std::endl;
+    // std::cout << "B: " << B << std::endl;
 
     Eigen::Matrix3d K_inv_T;
 
@@ -253,11 +254,11 @@ bool computeInitialParams::compute_intrinsics()
         K_inv_T = choleskyDecomposeofB.matrixL();
     }
 
-    std::cout << "K_inv_T: " << K_inv_T << "\n";
+    // std::cout << "K_inv_T: " << K_inv_T << "\n";
 
     K = K_inv_T(2, 2) * (K_inv_T.inverse()).transpose();
 
-    std::cout << "K: " << K << "\n";
+    // std::cout << "K: " << K << "\n";
     return true;
 }
 
@@ -268,12 +269,12 @@ Eigen::Matrix3d computeInitialParams::make_true_rotation_matrix(const Eigen::Mat
     Eigen::MatrixXd V = svd.matrixV();
     Eigen::MatrixXd U = svd.matrixU();
 
-    std::cout << "U: " << U << "\n";
-    std::cout << "V: " << V.transpose() << "\n";
+    // std::cout << "U: " << U << "\n";
+    // std::cout << "V: " << V.transpose() << "\n";
 
     Eigen::Matrix3d R_ = U * (V.transpose());
 
-    std::cout << "R_: " << R_ << "\n";
+    // std::cout << "R_: " << R_ << "\n";
 
     return R_;
 }
@@ -286,9 +287,9 @@ void computeInitialParams::estimate_view_transform(const Eigen::Matrix3d &H,
     Eigen::Vector3d h1 = H.col(1);
     Eigen::Vector3d h2 = H.col(2);
 
-    std::cout << "h0: " << h0 << std::endl;
-    std::cout << "h1: " << h1 << std::endl;
-    std::cout << "h2: " << h2 << std::endl;
+    // std::cout << "h0: " << h0 << std::endl;
+    // std::cout << "h1: " << h1 << std::endl;
+    // std::cout << "h2: " << h2 << std::endl;
 
     double k = (1.0 / (K.inverse() * h0).norm());
     Eigen::Vector3d r0 = k * (K.inverse() * h0);
@@ -296,31 +297,31 @@ void computeInitialParams::estimate_view_transform(const Eigen::Matrix3d &H,
     Eigen::Vector3d r2 = r0.cross(r1);
     t = k * (K.inverse() * h2);
 
-    std::cout << "k: " << k << std::endl;
-    std::cout << "r0: " << r0 << std::endl;
-    std::cout << "r1: " << r1 << std::endl;
-    std::cout << "r2: " << r2 << std::endl;
-    std::cout << "t: " << t << std::endl;
+    // std::cout << "k: " << k << std::endl;
+    // std::cout << "r0: " << r0 << std::endl;
+    // std::cout << "r1: " << r1 << std::endl;
+    // std::cout << "r2: " << r2 << std::endl;
+    // std::cout << "t: " << t << std::endl;
 
     Eigen::Matrix3d R_init;
     R_init.col(0) = r0;
     R_init.col(1) = r1;
     R_init.col(2) = r2;
 
-    std::cout << "R init: " << R_init << std::endl;
+    // std::cout << "R init: " << R_init << std::endl;
 
     R = make_true_rotation_matrix(R_init);
-    std::cout << "R: " << R << "\n";
+    // std::cout << "R: " << R << "\n";
 }
 
 bool computeInitialParams::compute_extrinsics()
 {
-    std::cout << "\n\n\n-------------------\n\n\n";
+    std::cout << "computing initial extrinsics for each of the imgs\n";
     int num_imgs = Hn.size();
 
     for(int i=0; i < num_imgs; i++)
     {
-        std::cout << "---------------------------\n";
+        // std::cout << "---------------------------\n";
         Eigen::Matrix3d R;
         Eigen::Vector3d t;
         estimate_view_transform(Hn[i], R, t);
@@ -355,7 +356,6 @@ computeInitialParams::composeP(const Eigen::Matrix3d &K,
                                 const std::vector<Eigen::Vector3d> &tn,
                                 const Eigen::Vector2d &d)
 {
-    std::cout << "\n\n----------------opt begin ---------------\n\n";
     int num_imgs = Rn.size();
     Eigen::VectorXd P(7 + 6 * num_imgs);
     Eigen::VectorXd k(7); 
@@ -367,12 +367,12 @@ computeInitialParams::composeP(const Eigen::Matrix3d &K,
         Eigen::AngleAxisd angleAxis(Rn[i]);
         Eigen::Vector3d rodriguesVector = angleAxis.angle() * angleAxis.axis();
 
-        std::cout << "R: " << Rn[i] << "\n";
-        std::cout << "rodrigues vector: " << rodriguesVector.transpose() << "\n";
+        // std::cout << "R: " << Rn[i] << "\n";
+        // std::cout << "rodrigues vector: " << rodriguesVector.transpose() << "\n";
 
         Eigen::VectorXd w(6);
         w << rodriguesVector(0), rodriguesVector(1), rodriguesVector(2), (tn[i])(0), (tn[i])(1), (tn[i])(2);
-        std::cout << "w: " << w << "\n";
+        // std::cout << "w: " << w << "\n";
         P.segment(7 + 6 * i, 6) = w;
     }
 
@@ -403,7 +403,7 @@ computeInitialParams::decomposeP(const Eigen::VectorXd &optP,
     optD(1) = k1;
 
     int num_imgs = (optP.size() - 7) / 6;
-    std::cout << "num imgs: " << num_imgs;
+    // std::cout << "num imgs: " << num_imgs;
 
     for(int i=0; i< num_imgs; i++)
     {
