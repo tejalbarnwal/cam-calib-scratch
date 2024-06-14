@@ -37,6 +37,9 @@ include_directories(
     ${EIGEN_INCLUDE_DIRS}
     ${OpenCV_INCLUDE_DIRS}
 )
+# foreach(dep math;gui;maps)
+#     include_directories(mrpt::${dep})
+# endforeach()
 
 # add_executable(vectorAddCpp src/vectorAdd.cpp)
 
@@ -51,7 +54,13 @@ include_directories(
 add_executable(main src/main.cpp src/calibration.cpp src/homography.cpp src/intrinsics.cpp src/extrinsics.cpp)
 target_link_libraries(main ${EIGEN_LIBRARIES} ${OpenCV_LIBRARIES} )
 
+add_executable(calib_main src/calibration_main.cpp src/calib/compute_init_param.cpp src/calib/refine.cpp)
+target_link_libraries(calib_main ${EIGEN_LIBRARIES} ${OpenCV_LIBRARIES} )
+
 add_executable(eg_mrpt_opt src/eg_mrpt_opt.cpp)
 foreach(dep math;random;gui;maps)
 	target_link_libraries(eg_mrpt_opt mrpt::${dep})
 endforeach()
+
+add_executable(eigen_lm2 src/eigen_lm2.cpp)
+target_link_libraries(eigen_lm2 ${EIGEN_LIBRARIES})
