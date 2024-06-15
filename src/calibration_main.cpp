@@ -154,15 +154,15 @@ int main(int argc, char const *argv[])
     // std::cout << "P size: " << P_size << "\n";
     std::cout << "\n------------- setup and run lm optimization --------------\n";
     typedef refine::LMFunctor<double> functorEg;
-    functorEg functor(P_size, 462);
+    functorEg functor(P_size, 924);
     functor.img_points = img_points;
     functor.object_points = object_points;
     std::cout << "functor created\n";
     Eigen::NumericalDiff<functorEg> numDiff(functor);
     std::cout << "num diff created\n";
     Eigen::LevenbergMarquardt<Eigen::NumericalDiff<functorEg>, double> lm(numDiff);
-    
-    std::cout << "run lm\n";
+
+    std::cout << "-------------------- begin opt -----------------------------------\n";
     lm.parameters.maxfev = 100000;
     lm.parameters.ftol= 1.0e-8;
     lm.parameters.gtol = 1.0e-8;
@@ -171,8 +171,11 @@ int main(int argc, char const *argv[])
     Eigen::VectorXd P = P_init;
     int ret = lm.minimize(P);
     // std::cout << "fvec : " << lm.fvec << std::endl;
+    std::cout << "fvec size: " << lm.fvec.size() << std::endl;
+    std::cout << "----- completed optimization ------\n";
     std::cout << "iter count: " << lm.iter << std::endl;
     std::cout << "iter cost function: " << lm.fnorm << std::endl;
+    std::cout << "fvec norm: " << lm.fvec.norm() << std::endl;
     std::cout << "return status: " << ret << std::endl;
     std::cout << "After solver, resultant P: \n" << P.transpose() << std::endl;
     std::cout << "~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~" << std::endl;
